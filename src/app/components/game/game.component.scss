@@ -1,0 +1,50 @@
+.game {
+	margin-top: 100px;
+	margin-left: auto;
+	margin-right: auto;
+	height: 500px;
+	width: 500px;
+}
+
+.game-table {
+	height: 100%;
+	width: 100%;
+	display: table;
+	table-layout: inherit;
+	border-collapse: collapse;
+}
+
+.game-row {
+	display: table-row;
+}
+
+.game-cell {
+	display: table-cell;
+	border: 1px solid black;
+}
+
+.black {
+	background-color: gray
+}
+
+.empty {
+	background-color: white
+}
+
+.marked {
+	$cross0: rgba(198, 83, 140, 0);
+	$cross1: rgba(198, 83, 140, 1);
+	background: 
+		linear-gradient(to top left,
+			$cross0 0%,
+			$cross0 calc(50% - 0.8px),
+			$cross1 50%,
+			$cross0 calc(50% + 0.8px),
+			$cross0 100%),
+		linear-gradient(to top right,
+			$cross0 0%,
+			$cross0 calc(50% - 0.8px),
+			$cross1 50%,
+			$cross0 calc(50% + 0.8px),
+			$cross0 100%);
+}

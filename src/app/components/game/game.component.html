@@ -1,0 +1,12 @@
+<div class="game">
+	<div class="game-table">
+		<div class="game-row" *ngFor='let row of image; let y = index'>
+			<div *ngFor='let cell of row; let x = index'
+				[ngClass]="['game-cell', getCellClass(x, y)]"
+				(mousedown)='onMouseDown($event, x, y)'
+				(contextmenu)='false'
+				(mouseup)='onMouseUp($event, x, y)'
+				(mouseover)='onMouseEnter($event, x, y)'></div>
+		</div>
+	</div>
+</div>
