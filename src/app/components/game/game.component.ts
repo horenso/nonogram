@@ -1,12 +1,14 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Cell } from 'src/app/model/cell';
+import { Game } from 'src/app/model/game';
+import { GameBuilder } from 'src/app/model/game-builder';
 
 enum State {
   NONE, DRAWING, ERASING, MARKING
 }
 
 @Component({
-  selector: 'app-game [sizeX] [sizeY] [solution]',
+  selector: 'app-game [sizeX] [sizeY]',
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.scss']
 })
@@ -14,42 +16,47 @@ export class GameComponent implements OnInit {
   
   @Input() sizeX = 10;
   @Input() sizeY = 10;
-  @Input() solution = [];
 
-  public image: Cell[][] = [];
+  @Output() gameFinished = new EventEmitter();
+
+  public game: Game | null = null;
 
   public state: State = State.NONE;
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit(): void {
-    this.resetImage();
-    console.log(this.image);
+    this.game = new GameBuilder(this.sizeX, this.sizeY, 0.7).build();
+    console.log(this.game.solutionToString());
+    console.log(this.game.rowHints);
+    console.log(this.game.colHints);
+    
   }
 
   public onMouseDown(event: MouseEvent, x: number, y: number): void {
     if (event.buttons === 1) {
-      if (this.image[y][x] === Cell.BLACK) {
-        this.image[y][x] = Cell.EMPTY;
+      if (this.game?.getCell(x, y) === Cell.BLACK) {
+        this.game?.setCell(x, y, Cell.EMPTY);
         this.state = State.ERASING;
       } else {
-        this.image[y][x] = Cell.BLACK;
+        this.game?.setCell(x, y, Cell.BLACK);
         this.state = State.DRAWING;
       }
     } else if (event.buttons === 2) {
-      if (this.image[y][x] === Cell.MARKED) {
-        this.image[y][x] = Cell.EMPTY;
+      if (this.game?.getCell(x, y) === Cell.MARKED) {
+        this.game?.setCell(x, y, Cell.EMPTY);
         this.state = State.ERASING;
       } else {
-        this.image[y][x] = Cell.MARKED;
+        this.game?.setCell(x, y,Cell.MARKED);
         this.state = State.MARKING;
       }
     } else if (event.buttons === 4) {
-        this.image[y][x] = Cell.EMPTY;
+        this.game?.setCell(x, y, Cell.EMPTY);
         this.state = State.ERASING;
     }
 
-    console.log(`mouse down (${x}, ${y}) button ${event.buttons}`);
+    // console.log(`mouse down (${x}, ${y}) button ${event.buttons}`);
   }
 
   public onMouseUp(event: MouseEvent, x: number, y: number): void {
@@ -58,37 +65,55 @@ export class GameComponent implements OnInit {
   }
 
   public onMouseEnter(event: MouseEvent, x: number, y: number): void {
-    if (this.state === State.DRAWING && this.image[y][x] !== Cell.BLACK) {
-      this.image[y][x] = Cell.BLACK;
+    if (this.state === State.DRAWING && this.game?.getCell(x, y) !== Cell.BLACK) {
+      this.game?.setCell(x, y, Cell.BLACK);
     }
-    if (this.state === State.ERASING && this.image[y][x] !== Cell.EMPTY) {
-      this.image[y][x] = Cell.EMPTY;
+    if (this.state === State.ERASING && this.game?.getCell(x, y) !== Cell.EMPTY) {
+      this.game?.setCell(x, y, Cell.EMPTY);
     }
-    if (this.state === State.MARKING && this.image[y][x] !== Cell.MARKED) {
-      this.image[y][x] = Cell.MARKED;
+    if (this.state === State.MARKING && this.game?.getCell(x, y) !== Cell.MARKED) {
+      this.game?.setCell(x, y, Cell.MARKED);
     }
     // console.log(`mouse enter (${x}, ${y}), event: ${JSON.stringify(event)}`)
   }
 
-  public getTableWidth(): number { return 100/this.sizeX; }
+  public onMouseLeavesGame(): void {
+    this.state = State.NONE;
+  }
 
-  public getTableHeight(): number { return 100/this.sizeY; }
+  public getRowHint(col: number): number[] {
+    if (this.game != null) {
+      return this.game.rowHints[col];
+    } else {
+      return [];
+    }
+  }
+
+  public getColHint(row: number): string {
+    if (this.game != null) {
+      if (this.game.colHints[row] === []) {
+        return 'no hint';
+      }
+      return this.game.colHints[row].toString();
+    }
+    return '';
+  }
+
+  public counter(num: number): number[] {
+    return Array.from({length:num},(v,k)=>k+1);
+  }
+
+  public getCellStyle(): object {
+    let percent = 100 / this.sizeX;
+    return {'width': `${percent}%`, 'padding-bottom': `${percent}%`};
+  }
 
   public getCellClass(x: number, y: number): string {
-    switch(this.image[y][x]) {
+    switch(this.game?.getCell(x, y)) {
       case Cell.EMPTY: return 'empty';
       case Cell.BLACK: return 'black';
       case Cell.MARKED: return 'marked';
     }
-  }
-
-  private resetImage(): void {
-    for (let i = 0; i < this.sizeY; i++) {
-      const row: Cell[] = [];
-      for (let j = 0; j < this.sizeX; j++) {
-        row.push(Cell.EMPTY);
-      }
-      this.image.push(row);
-    }
+    return 'null';
   }
 }

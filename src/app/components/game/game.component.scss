@@ -1,50 +1,92 @@
-.game {
-	margin-top: 100px;
-	margin-left: auto;
-	margin-right: auto;
-	height: 500px;
-	width: 500px;
-}
+$gameBorderColor: rgb(0, 0, 179);
+$gridColor: black;
+$seperationColor: rgb(123, 123, 255);
 
-.game-table {
+$blackColor: gray;
+$markColor: rgba(198, 83, 140, 1);
+$emptyColor: white;
+
+.game {
 	height: 100%;
 	width: 100%;
-	display: table;
-	table-layout: inherit;
-	border-collapse: collapse;
 }
 
-.game-row {
+.gameTable {
+	background-color: $emptyColor;
+	display: table;
+	border-collapse: collapse;
+	border: 2px double $gameBorderColor;
+}
+
+.gameRow {
 	display: table-row;
 }
 
-.game-cell {
+// .gameRow:first-child {
+// 	border-top: 2px solid $seperationColor;
+// }
+
+.gameRow:nth-child(5n) {
+	border-bottom: 2px solid red;
+}
+
+.gameCell {
 	display: table-cell;
-	border: 1px solid black;
+	border: 1px solid $gridColor;
+	height: 0;
+}
+
+// .gameCell:first-child {
+// 	border-left: 2px solid $seperationColor;
+// }
+
+.gameCell:nth-child(5n + 1) {
+	border-right: 2px solid $seperationColor;
+}
+
+.gameColHintRow {
+	display: table-row;
+}
+
+.gameColHint {
+	display: table-cell;
+	background-color: green;
+}
+
+.gameRowHint {
+	display: table-cell;
+	background-color: teal;
+}
+
+.emptyCell {
+	display: table-cell;
+}
+
+.hint {
+	user-select: none;
 }
 
 .black {
-	background-color: gray
+	background-color: $blackColor;
 }
 
 .empty {
-	background-color: white
+	background-color: $emptyColor;
 }
 
 .marked {
-	$cross0: rgba(198, 83, 140, 0);
-	$cross1: rgba(198, 83, 140, 1);
+	$transparent: rgba(0, 0, 0, 0);
 	background: 
 		linear-gradient(to top left,
-			$cross0 0%,
-			$cross0 calc(50% - 0.8px),
-			$cross1 50%,
-			$cross0 calc(50% + 0.8px),
-			$cross0 100%),
+			$transparent 0%,
+			$transparent calc(50% - 0.8px),
+			$markColor 50%,
+			$transparent calc(50% + 0.8px),
+			$transparent 100%),
 		linear-gradient(to top right,
-			$cross0 0%,
-			$cross0 calc(50% - 0.8px),
-			$cross1 50%,
-			$cross0 calc(50% + 0.8px),
-			$cross0 100%);
+			$transparent 0%,
+			$transparent calc(50% - 0.8px),
+			$markColor 50%,
+			$transparent calc(50% + 0.8px),
+			$transparent 100%);
 }

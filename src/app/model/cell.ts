@@ -1,5 +1,5 @@
 export enum Cell {
-	EMPTY = 0,
-	BLACK = 1,
-	MARKED = 2
+  EMPTY = 0,
+  BLACK = 1,
+  MARKED = 2
 }
